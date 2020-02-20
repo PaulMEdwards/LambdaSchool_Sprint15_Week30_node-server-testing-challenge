@@ -4,27 +4,33 @@
   "description": "Node Server Testing Challenge",
   "main": "server.js",
   "scripts": {
-    "test": "jest --watch"
+    "test": "cross-env DB_ENV=testing jest --watch",
+    "server": "nodemon index.js"
   },
   "jest": {
     "testEnvironment": "node"
   },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/LambdaSchool/node-server-testing.git"
+    "url": "git+https://github.com/PaulMEdwards/LambdaSchool_Sprint15_Week30_node-server-testing.git"
   },
   "keywords": [],
-  "author": "",
+  "author": "Paul M Edwards, Student, Lambda School",
   "license": "ISC",
   "bugs": {
-    "url": "https://github.com/LambdaSchool/node-server-testing/issues"
+    "url": "https://github.com/PaulMEdwards/LambdaSchool_Sprint15_Week30_node-server-testing/issues"
   },
-  "homepage": "https://github.com/LambdaSchool/node-server-testing#readme",
+  "homepage": "https://github.com/PaulMEdwards/LambdaSchool_Sprint15_Week30_node-server-testing#readme",
   "devDependencies": {
-    "jest": "^24.9.0",
+    "jest": "^25.1.0",
     "supertest": "^4.0.2"
   },
   "dependencies": {
-    "express": "^4.17.1"
+    "cross-env": "^7.0.0",
+    "dotenv": "^8.2.0",
+    "express": "^4.17.1",
+    "knex": "^0.20.10",
+    "nodemon": "^2.0.2",
+    "sqlite3": "^4.1.1"
   }
 }
