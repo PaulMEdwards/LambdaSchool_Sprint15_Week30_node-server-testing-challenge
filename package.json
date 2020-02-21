@@ -4,8 +4,10 @@
   "description": "Node Server Testing Challenge",
   "main": "server.js",
   "scripts": {
-    "test": "cross-env DB_ENV=testing jest --watch",
-    "server": "nodemon index.js"
+    "test": "cross-env DB_ENV=testing jest",
+    "test:watch": "cross-env DB_ENV=testing NO_LOGGER=true jest --watch --runInBand --detectOpenHandles",
+    "server": "nodemon index.js",
+    "server:testing": "cross-env DB_ENV=testing nodemon index.js"
   },
   "jest": {
     "testEnvironment": "node"
@@ -27,6 +29,7 @@
   },
   "dependencies": {
     "bcryptjs": "^2.4.3",
+    "body-parser": "^1.19.0",
     "connect-session-knex": "^1.5.0",
     "cors": "^2.8.5",
     "cross-env": "^7.0.0",

@@ -15,6 +15,7 @@ module.exports = {
 
 function createUser(user) {
   if (user) {
+    if (!process.env.NO_LOGGER) console.log(`TCL: createUser -> user`, user);
     return db("users")
       .insert(user)
       .then(u => this.readUserById(u[0]));

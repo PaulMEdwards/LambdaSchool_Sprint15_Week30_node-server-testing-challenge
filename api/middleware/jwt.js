@@ -6,10 +6,13 @@ module.exports = {
 };
 
 function generateToken(user) {
+  // console.log(`TCL: generateToken -> user`, user);
   const payload = {
     id: user.id,
     username: user.username,
-    department: user.department,
+    email: user.email,
+    enabled: user.enabled,
+    roles: user.roles,
   };
 
   const options = {

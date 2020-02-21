@@ -1,18 +1,20 @@
 const router = require('express').Router();
 const bcrypt = require('bcryptjs');
 const jwt = require('../middleware/jwt.js');
+const bodyParser = require('body-parser');
+const jsonParser = bodyParser.json();
 
 const Users = require('../users/users-model.js');
 
-router.post('/register', (req, res) => {
+router.post('/register', jsonParser, (req, res) => {
   let userData = req.body;
-  console.log(`TCL: user`, userData);
+  if (!process.env.NO_LOGGER) console.log(`TCL: user`, userData);
 
-  if (!userData.username || !userData.password || !userData.department) {
+  if (!userData.username || !userData.password || !userData.enabled) {
     res.status(400).json({ message: `Required data missing` });
   } else {
     const hash = bcrypt.hashSync(userData.password, 12);
-    console.log(`TCL: hash`, hash);
+    if (!process.env.NO_LOGGER) console.log(`TCL: hash`, hash);
     
     userData.password = hash;
 
@@ -21,14 +23,15 @@ router.post('/register', (req, res) => {
         res.status(201).json(saved);
       })
       .catch(err => {
+        if (!process.env.NO_LOGGER) console.log(`TCL: err`, err);
         res.status(500).json(err);
       });
   }
 });
 
-router.post('/login', (req, res) => {
+router.post('/login', jsonParser, (req, res) => {
   let userData = req.body;
-  console.log(`TCL: login -> user input`, userData);
+  if (!process.env.NO_LOGGER) console.log(`TCL: login -> user input`, userData);
 
   if (!userData.username || !userData.password) {
     res.status(400).json({ message: `Required data missing` });
@@ -37,17 +40,27 @@ router.post('/login', (req, res) => {
     Users.readUserByName(username)
       .first()
       .then(user => {
-        console.log(`TCL: login -> user found\n`, user);
+        if (!process.env.NO_LOGGER) console.log(`TCL: login -> user found\n`, user);
         if (user) {
           const b = bcrypt.compareSync(userData.password, user.password);
-          console.log(`TCL: login -> b =`, b);
+          if (!process.env.NO_LOGGER) console.log(`TCL: login -> b =`, b);
           if (b) {
-            const token = jwt.generateToken(user);
-            console.log(`TCL: login -> token =`, token);
-            res.status(200).json({
-              message: `Welcome ${user.username}!`,
-              token,
-            });
+            Users.readUserRolesByUserId(user.id)
+              .then(userRoles => {
+                if (userRoles) {
+                  newUser = { roles: userRoles, ...user };
+                  user = newUser;
+                }
+                const token = jwt.generateToken(user);
+                if (!process.env.NO_LOGGER) {
+                  console.log(`TCL: user:\n`, user);
+                  console.log(`TCL: login -> token =`, token);
+                };
+                res.status(200).json({
+                  message: `Welcome ${user.username}!`,
+                  token,
+                });
+              });
           } else {
             res.status(401).json({ message: `Invalid Credentials` });
           };
@@ -62,23 +75,23 @@ router.post('/login', (req, res) => {
 });
 
 router.get('/logout', (req, res) => {
-  console.log(`TCL: logout -> req.session\n`, req.session);
+  if (!process.env.NO_LOGGER) console.log(`TCL: logout -> req.session\n`, req.session);
   if (req.session) {
-    console.log(`TCL: logout -> has session`);
+    if (!process.env.NO_LOGGER) console.log(`TCL: logout -> has session`);
     req.session.destroy(err => {
       if (err) {
-        console.log(`TCL: logout -> err`, err);
+        if (!process.env.NO_LOGGER) console.log(`TCL: logout -> err`, err);
         res.status(500).json({ message: 'Unable to destroy session!' });
       } else {
-        console.log(`TCL: logout -> OK`);
+        if (!process.env.NO_LOGGER) console.log(`TCL: logout -> OK`);
         res.status(200).json({ message: 'Logged out.' });
       };
     });
   } else {
     res.end();
-    console.log(`TCL: logout -> end`);
+    if (!process.env.NO_LOGGER) console.log(`TCL: logout -> end`);
   };
-  console.log(`TCL: logout -> done`);
+  if (!process.env.NO_LOGGER) console.log(`TCL: logout -> done`);
 });
 
 module.exports = router;

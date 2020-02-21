@@ -3,7 +3,7 @@
  * - this middleware runs on every request made to the API
 */
 function logger(req, res, next) {
-  console.log(`[${new Date().toISOString()}] ${req.method} to ${req.url}`);
+  if (!process.env.NO_LOGGER) console.log(`[${new Date().toISOString()}] ${req.method} to ${req.url}`);
   next();
 }
 

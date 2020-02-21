@@ -2,7 +2,7 @@ const jwt = require('jsonwebtoken');
 const secrets = require('../config/secrets.js');
 
 function auth(req, res, next) {
-  console.log(`req.headers\n`, req.headers);
+  if (!process.env.NO_LOGGER) console.log(`TCL: auth -> req.headers\n`, req.headers);
 
   const token = req.headers.authorization;
   if (token) {
@@ -11,6 +11,7 @@ function auth(req, res, next) {
         res.status(401).json({ message: "You shall not pass!" });
       } else {
         req.decodedJwt = decodedToken;
+        if (!process.env.NO_LOGGER) console.log(`TCL: auth -> success!`);
         next();
       };
     });

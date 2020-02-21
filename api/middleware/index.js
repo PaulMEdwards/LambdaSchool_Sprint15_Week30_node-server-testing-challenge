@@ -1,4 +1,5 @@
 const express = require('express');
+const bodyParser = require('body-parser');
 const helmet = require('helmet');
 const cors = require('cors');
 const logger = require('./logger');
@@ -28,6 +29,7 @@ const sessionConfig = {
 module.exports = server => {
   server.use(helmet());
   server.use(express.json());
+  server.use(bodyParser.raw({ type: 'application/json' }));
   server.use(cors());
   server.use(logger);
   server.use(session(sessionConfig));

@@ -5,13 +5,13 @@ const Roles = require('./roles-model.js');
 const auth = require('../middleware/auth');
 const checkRole = require('../middleware/check-role');
 
-router.post('/', auth, checkRole(['Administrator']), (req, res) => {
+router.post('/', auth, checkRole, (req, res) => {
   const roleData = req.body;
 
   if (!roleData.name) {
     res.status(400).json({ message: `Required data missing` });
   } else {
-    console.log(`TCL: createRole(roleData):\n`, roleData);
+    if (!process.env.NO_LOGGER) console.log(`TCL: createRole(roleData):\n`, roleData);
     Roles.createRole(roleData)
       .then(addedRole => {
         res.status(201).json(addedRole);
@@ -23,7 +23,7 @@ router.post('/', auth, checkRole(['Administrator']), (req, res) => {
 });
 
 router.get('/', auth, (req, res) => {
-  console.log(`TCL: readRoles()`);
+  if (!process.env.NO_LOGGER) console.log(`TCL: readRoles()`);
   Roles.readRoles()
     .then(roles => {
       res.json(roles);
@@ -36,11 +36,11 @@ router.get('/:roleId', auth, (req, res) => {
   const { roleId } = req.params;
   roleId = parseInt(roleId, 10);
   if (roleId > 0) {
-    console.log(`TCL: readRoleById(${roleId})`);
+    if (!process.env.NO_LOGGER) console.log(`TCL: readRoleById(${roleId})`);
     Roles.readRoleById(roleId)
       .then(role => {
         if (role) {
-          console.log(`TCL: found:\n`, role);
+          if (!process.env.NO_LOGGER) console.log(`TCL: found:\n`, role);
           res.json({ roleData: role });
         } else {
           res.status(404).json({ message: `Could not get role with given id` });
@@ -52,7 +52,7 @@ router.get('/:roleId', auth, (req, res) => {
   };
 });
 
-router.put('/:roleId', auth, checkRole(['Administrator']), (req, res) => {
+router.put('/:roleId', auth, checkRole, (req, res) => {
   const { roleId } = req.params;
   roleId = parseInt(roleId, 10);
   const changes = req.body;
@@ -63,7 +63,7 @@ router.put('/:roleId', auth, checkRole(['Administrator']), (req, res) => {
     if (roleId > 0) {
       Roles.readRoleById(roleId)
         .then(role => {
-          console.log(`TCL: updateRole(${roleId}):\n`, changes);
+          if (!process.env.NO_LOGGER) console.log(`TCL: updateRole(${roleId}):\n`, changes);
           Roles.updateRole(roleId, changes)
             .then(updatedRole => {
               if (updatedRole) {
@@ -80,11 +80,11 @@ router.put('/:roleId', auth, checkRole(['Administrator']), (req, res) => {
   };
 });
 
-router.delete('/:roleId', auth, checkRole(['Administrator']), (req, res) => {
+router.delete('/:roleId', auth, checkRole, (req, res) => {
   const { roleId } = req.params;
   roleId = parseInt(roleId, 10);
   if (roleId > 0) {
-    console.log(`TCL: deleteRole(${roleId})`);
+    if (!process.env.NO_LOGGER) console.log(`TCL: deleteRole(${roleId})`);
     Roles.deleteRole(roleId)
       .then(removedRole => {
         if (removedRole) {
