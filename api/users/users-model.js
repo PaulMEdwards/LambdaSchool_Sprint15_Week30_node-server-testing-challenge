@@ -13,10 +13,10 @@ module.exports = {
   deleteUser,
 };
 
-function createUser(user) {
+async function createUser(user) {
   if (user) {
     if (!process.env.NO_LOGGER) console.log(`TCL: createUser -> user`, user);
-    return db("users")
+    return await db("users")
       .insert(user)
       .then(u => this.readUserById(u[0]));
   } else {
@@ -24,30 +24,30 @@ function createUser(user) {
   };
 };
 
-function readUsers() {
-  return db("users");
+async function readUsers() {
+  return await db("users");
 };
-function readUserById(id) {
+async function readUserById(id) {
   if (id) {
-    return db("users")
+    return await db("users")
       .where("id", id)
       .first();
   } else {
     return null;
   };
 };
-function readUserByName(username) {
+async function readUserByName(username) {
   if (username) {
-    return db("users")
+    return await db("users")
       .where("username", username)
       .first();
   } else {
     return null;
   };
 };
-function readUserRolesByUserId(user_id) {
+async function readUserRolesByUserId(user_id) {
   if (user_id) {
-    return db("users as u")
+    return await db("users as u")
       .leftJoin("user_roles as ur", "ur.user_id", "u.id")
       .leftJoin("roles as r", "r.id", "ur.role_id")
       .select("r.*")
@@ -56,9 +56,9 @@ function readUserRolesByUserId(user_id) {
     return null;
   };
 };
-function readUsersInRole(role_id) {
+async function readUsersInRole(role_id) {
   if (role_id) {
-    return db("users as u")
+    return await db("users as u")
       .leftJoin("user_roles as ur", "ur.user_id", "u.id")
       .leftJoin("roles as r", "r.id", "ur.role_id")
       .select("u.*")
@@ -68,9 +68,9 @@ function readUsersInRole(role_id) {
   };
 };
 
-function updateUser(id, userUpdate) {
+async function updateUser(id, userUpdate) {
   if (id && userUpdate) {
-    return db("users")
+    return await db("users")
       .update(userUpdate)
       .then(count => (count > 0 ? this.readUserById(id) : null));
   } else {
@@ -78,9 +78,9 @@ function updateUser(id, userUpdate) {
   };
 };
 
-function deleteUser(id) {
+async function deleteUser(id) {
   if (id) {
-    return db("users")
+    return await db("users")
       .where("id", id)
       .del();
   } else {

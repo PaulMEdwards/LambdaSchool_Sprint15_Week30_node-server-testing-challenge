@@ -8,9 +8,9 @@ module.exports = {
   deleteRole,
 };
 
-function createRole(role) {
+async function createRole(role) {
   if (role) {
-    return db("roles")
+    return await db("roles")
       .insert(role)
       .then(u => this.readRoleById(u[0]));
   } else {
@@ -18,12 +18,12 @@ function createRole(role) {
   };
 };
 
-function readRoles() {
-  return db("roles");
+async function readRoles() {
+  return await db("roles");
 };
-function readRoleById(id) {
+async function readRoleById(id) {
   if (id) {
-    return db("roles")
+    return await db("roles")
       .where("id", id)
       .first();
   } else {
@@ -31,9 +31,9 @@ function readRoleById(id) {
   };
 };
 
-function updateRole(id, roleUpdate) {
+async function updateRole(id, roleUpdate) {
   if (id && roleUpdate) {
-    return db("roles")
+    return await db("roles")
       .update(roleUpdate)
       .then(count => (count > 0 ? this.readRoleById(id) : null));
   } else {
@@ -41,9 +41,9 @@ function updateRole(id, roleUpdate) {
   };
 };
 
-function deleteRole(id) {
+async function deleteRole(id) {
   if (id) {
-    return db("roles")
+    return await db("roles")
       .where("id", id)
       .del();
   } else {
